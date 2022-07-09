@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="stateHidden"
+    tools:context=".ui.component.login.LoginActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--Signin Label-->
+
+            <TextView
+               android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="Sign In"
+                android:textSize="28sp" />
+            <!--Signin  Intro-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="SignIn Detail"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+
+            <!--Email Address EditText-->
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/outline_et"
+                android:gravity="center_vertical"
+                android:hint="Email Address"
+                android:maxLines="1"
+                android:inputType="textEmailAddress"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <!--Password EditText-->
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/outline_et"
+                android:gravity="center_vertical"
+                android:hint="Password"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@android:color/darker_gray" />
+
+
+            <!--Forgot Password TextView-->
+
+            <TextView
+                android:id="@+id/tvForgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="Forgot Password?"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+            <!--Signin Btn-->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/solid_rounded_btn"
+                android:gravity="center"
+                android:text="Sign In"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/colorPrimary" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
