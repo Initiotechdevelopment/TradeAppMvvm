@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -57,6 +57,7 @@
                 android:gravity="center_vertical"
                 android:hint="Email Address"
                 android:maxLines="1"
+                android:text="sumeet@sumeet.com"
                 android:inputType="textEmailAddress"
                 android:padding="16dp"
                 android:textColor="@color/colorPrimary"
@@ -75,6 +76,7 @@
                 android:background="@drawable/outline_et"
                 android:gravity="center_vertical"
                 android:hint="Password"
+                android:text="sumeet"
                 android:maxLines="1"
                 android:inputType="textPassword"
                 android:padding="16dp"
@@ -112,4 +114,16 @@
                 app:backgroundTint="@color/colorPrimary" />
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/loader_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+</RelativeLayout>

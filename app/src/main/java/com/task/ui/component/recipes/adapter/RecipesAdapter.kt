@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.task.data.dto.trade.DataItem
 import com.task.data.dto.trade.TradeItems
 import com.task.databinding.RecipeItemBinding
+import com.task.databinding.TradeItemBinding
 import com.task.ui.base.listeners.RecyclerItemListener
 import com.task.ui.component.recipes.RecipesListViewModel
 
@@ -22,7 +23,7 @@ class RecipesAdapter(private val recipesListViewModel: RecipesListViewModel, pri
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val itemBinding = RecipeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemBinding = TradeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecipeViewHolder(itemBinding)
     }
 

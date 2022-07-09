@@ -15,10 +15,7 @@ import com.task.data.DataRepositorySource
 import com.task.data.Resource
 import com.task.data.dto.recipes.Recipes
 import com.task.data.dto.recipes.RecipesItem
-import com.task.data.dto.trade.DataItem
-import com.task.data.dto.trade.TradeItemDataResponse
-import com.task.data.dto.trade.TradeItems
-import com.task.data.dto.trade.TradeResponse
+import com.task.data.dto.trade.*
 import com.task.data.remote.moshiFactories.MyKotlinJsonAdapterFactory
 import com.task.data.remote.moshiFactories.MyStandardJsonAdapters
 import com.task.ui.base.BaseViewModel
@@ -51,6 +48,9 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
     val recipesLiveDataPrivateTradeRes = MutableLiveData<List<DataItem?>>()
     val tradeResponse: LiveData<List<DataItem?>> get() = recipesLiveDataPrivateTradeRes
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val watchlistname = MutableLiveData<List<Watchlistname?>>()
+    val watchlistnameResponse: LiveData<List<Watchlistname?>> get() = watchlistname
 
     //TODO check to make them as one Resource
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -82,6 +82,8 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
     var recipes: TradeResponse = TradeResponse(arrayListOf())
 
     lateinit var context: Context;
+
+    var selectedTab = "WATCHLIST 1"
 
     fun set(c:Context){
         this.context = c
@@ -211,5 +213,67 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
 
     }
 
+    fun getJsonDataFromAssetWithSelectedTab() {
+        var jsonString: String = ""
+        try {
+            if(selectedTab.equals("WATCHLIST 1")){
+                jsonString = context.assets.open("watchlist1_data.json").bufferedReader().use { it.readText() }
+
+            }else if(selectedTab.equals("WATCHLIST 2")){
+                jsonString = context.assets.open("watchlist2_data.json").bufferedReader().use { it.readText() }
+
+            }else if(selectedTab.equals("WATCHLIST 3")){
+                jsonString = context.assets.open("watchlist3_data.json").bufferedReader().use { it.readText() }
+            }
+//            jsonString = context.assets.open("watchlist2_data.json").bufferedReader().use { it.readText() }
+
+            val gson = Gson()
+//            val listPersonType = object : TypeToken<TradeResponse>() {}.type
+            var tradeItems: TradeItemDataResponse =
+                gson.fromJson(jsonString, TradeItemDataResponse::class.java)
+            Log.d("size", " :: " + tradeItems.data?.size)
+
+            tradeItems.data?.forEachIndexed { idx, person ->
+                Log.i(
+                    "data",
+                    "> Item $idx:\n$person"
+                )
+            }
+
+            tradeItems?.data?.let {
+                recipesLiveDataPrivateTradeRes.value = emptyList()
+                recipesLiveDataPrivateTradeRes.value = it
+            }
+            //loadDataFromGson(tradeItems)
+
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+
+        }
+
+    }
+
+    fun getWatchlistname() {
+        val jsonString: String
+        try {
+            jsonString = context.assets.open("watchlist_names.json").bufferedReader().use { it.readText() }
+
+            val gson = Gson()
+//            val listPersonType = object : TypeToken<TradeResponse>() {}.type
+            var tradeItems: WatchlistResponse =
+                gson.fromJson(jsonString, WatchlistResponse::class.java)
+
+
+            tradeItems.let {
+                watchlistname.value =  emptyList()
+                watchlistname.value = it.mWName
+            }
+            //loadDataFromGson(tradeItems)
+
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+
+        }
+    }
 
 }

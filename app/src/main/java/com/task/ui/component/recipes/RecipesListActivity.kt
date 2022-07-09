@@ -15,6 +15,7 @@ import android.widget.SearchView.OnQueryTextListener
 import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -22,17 +23,16 @@ import com.google.gson.reflect.TypeToken
 import com.task.R
 import com.task.RECIPE_ITEM_KEY
 import com.task.data.Resource
-import com.task.data.dto.trade.DataItem
-import com.task.data.dto.trade.TradeItemDataResponse
-import com.task.data.dto.trade.TradeItems
-import com.task.data.dto.trade.TradeResponse
+import com.task.data.dto.trade.*
 import com.task.data.error.SEARCH_ERROR
 import com.task.databinding.HomeActivityBinding
 import com.task.ui.base.BaseActivity
 import com.task.ui.component.details.DetailsActivity
 import com.task.ui.component.recipes.adapter.RecipesAdapter
+import com.task.ui.component.recipes.adapter.TradeWatchlistAdapter
 import com.task.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.home_activity.*
 import java.io.IOException
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
@@ -45,7 +45,9 @@ class RecipesListActivity : BaseActivity() {
     private lateinit var binding: HomeActivityBinding
 
     private val recipesListViewModel: RecipesListViewModel by viewModels()
+
     private lateinit var recipesAdapter: RecipesAdapter
+    private lateinit var tradeAdapter: TradeWatchlistAdapter
 
     override fun initViewBinding() {
         binding = HomeActivityBinding.inflate(layoutInflater)
@@ -58,16 +60,26 @@ class RecipesListActivity : BaseActivity() {
         supportActionBar?.title = getString(R.string.recipe)
         val layoutManager = LinearLayoutManager(this)
         binding.rvRecipesList.layoutManager = layoutManager
+
+        binding.watchlistname.layoutManager =
+            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+
+
         binding.rvRecipesList.setHasFixedSize(true)
 
         recipesListViewModel.set(this)
 
+        recipesListViewModel.getWatchlistname()
 
         fixedRateTimer("timer", false, 0L, 30 * 1000) {
             this@RecipesListActivity.runOnUiThread {
-                recipesListViewModel.getJsonDataFromAsset()
+                recipesListViewModel.getJsonDataFromAssetWithSelectedTab()
             }
         }
+
+//        binding.watchlistname.findViewHolderForAdapterPosition(0)?.itemView?.performClick()
+
 
 //        recipesListViewModel.getRecipes()
 //        recipesListViewModel.getTradeResponse()
@@ -114,8 +126,22 @@ class RecipesListActivity : BaseActivity() {
     private fun bindListData(recipes: List<DataItem>) {
         if (!(recipes.isNullOrEmpty())) {
             recipesAdapter = RecipesAdapter(recipesListViewModel, recipes)
+
             binding.rvRecipesList.adapter = recipesAdapter
             showDataView(true)
+
+
+        } else {
+            showDataView(false)
+        }
+    }
+
+    private fun bindWatchlist(watchlistname: List<Watchlistname>) {
+        if (!(watchlistname.isNullOrEmpty())) {
+            tradeAdapter = TradeWatchlistAdapter(recipesListViewModel, watchlistname)
+            binding.watchlistname.adapter = tradeAdapter
+            showDataView(true)
+
         } else {
             showDataView(false)
         }
@@ -181,16 +207,25 @@ class RecipesListActivity : BaseActivity() {
         data?.let {
             bindListData(recipes = it as List<DataItem>)
         }
+
     }
 
     override fun observeViewModel() {
         observe(recipesListViewModel.recipesLiveData, ::handleRecipesList)
         observe(recipesListViewModel.tradeResponse, ::handleTradeList)
+        observe(recipesListViewModel.watchlistnameResponse, ::watchlistname)
         //observe(recipesListViewModel.recipeSearchFound, ::showSearchResult)
         observe(recipesListViewModel.noSearchFound, ::noSearchResult)
 //        observeEvent(recipesListViewModel.openRecipeDetails, ::navigateToDetailsScreen)
         observeSnackBarMessages(recipesListViewModel.showSnackBar)
         observeToast(recipesListViewModel.showToast)
+
+    }
+
+    private fun watchlistname(list: List<Watchlistname?>) {
+        list?.let {
+            bindWatchlist(watchlistname = it as List<Watchlistname>)
+        }
 
     }
 
