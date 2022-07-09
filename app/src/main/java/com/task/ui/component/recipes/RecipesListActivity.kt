@@ -106,7 +106,7 @@ class RecipesListActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_refresh -> recipesListViewModel.getTradeResponse()
+            R.id.action_refresh -> recipesListViewModel.recipesLiveDataPrivateTradeRes
         }
         return super.onOptionsItemSelected(item)
     }
@@ -122,15 +122,14 @@ class RecipesListActivity : BaseActivity() {
     private fun bindListData(recipes: List<DataItem>) {
         if (!(recipes.isNullOrEmpty())) {
             tradeDataAdapter = TradeDataAdapter(recipesListViewModel, recipes)
+//            tradeDataAdapter
             binding.rvRecipesList.adapter = tradeDataAdapter
+            tradeDataAdapter.setActivity(this)
+
             showDataView(true)
             tradeDataAdapter.notifyDataSetChanged()
 
-            fixedRateTimer("timer", false, 0L, 3 * 1000) {
-                this@RecipesListActivity.runOnUiThread {
 
-                }
-            }
 
         } else {
             showDataView(false)

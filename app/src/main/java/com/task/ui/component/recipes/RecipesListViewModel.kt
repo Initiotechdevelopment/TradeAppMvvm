@@ -109,20 +109,20 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
         }
     }
 */
-    fun getTradeResponse() {
+ /*   fun getTradeResponse() {
         viewModelScope.launch {
 
 //            recipesLiveDataPrivateTradeRes.value = recipes
 
-            /* wrapEspressoIdlingResource {
+            *//* wrapEspressoIdlingResource {
                  dataRepositoryRepository.requestTraderesponse().collect {
                      recipesLiveDataPrivateTradeRes.value = it
                  }
-             }*/
+             }*//*
 
         }
     }
-
+*/
     fun openRecipeDetails(recipe: DataItem) {
 //        openRecipeDetailsPrivate.value = SingleEvent(recipe)
     }
@@ -238,13 +238,12 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
             val listnewchangedata = ArrayList<DataItem?>();
             tradeItems.data?.forEachIndexed { idx, trademodel ->
                 var itemminusplus = Random.nextInt(3);
-
                 Log.d("size", " :: " + tradeItems.data?.get(idx)?.lastTradePrice)
-               /* if(itemminusplus.equals(2)){
+                if(itemminusplus.equals(2)){
                     trademodel?.lastTradePrice?.minus(Random.nextInt(10))
                 }else{
                     trademodel?.lastTradePrice?.plus(Random.nextInt(10))
-                }*/
+                }
                 trademodel?.lastTradePrice?.plus(Random.nextDouble(10.0))
                 trademodel?.dayHigh?.plus(Random.nextDouble(10.0))
                 trademodel?.exch?.plus(Random.nextDouble(10.0))
@@ -256,9 +255,9 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
 
 
 
-            fixedRateTimer("timer", false, 0L, 3 * 1000) {
+            fixedRateTimer("timer", false, 0L, 1 * 1000) {
                 ((context as RecipesListActivity)).runOnUiThread {
-                    val listnewchangedata = ArrayList<DataItem?>();
+//                    val listnewchangedata = ArrayList<DataItem?>();
                     tradeItems.data?.forEachIndexed { idx, trademodel ->
                         var itemminusplus = Random.nextInt(3);
 

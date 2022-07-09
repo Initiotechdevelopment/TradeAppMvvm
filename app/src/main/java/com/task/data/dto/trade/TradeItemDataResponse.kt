@@ -38,10 +38,10 @@ data class DataItem(
 	val shortName: String? = null,
 
 	@field:SerializedName("LastTradePrice")
-	val lastTradePrice: Double? = null,
+	var lastTradePrice: Double? = null,
 
 	@field:SerializedName("PClose")
-	val pClose: Double? = null,
+	var pClose: Double? = null,
 
 	@field:SerializedName("Name")
 	val name: String? = null,
