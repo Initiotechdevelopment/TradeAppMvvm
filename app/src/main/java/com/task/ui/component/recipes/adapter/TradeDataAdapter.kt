@@ -14,7 +14,7 @@ import com.task.ui.component.recipes.RecipesListViewModel
  * Created by Sumeetbhut
  */
 
-class RecipesAdapter(private val recipesListViewModel: RecipesListViewModel, private val recipes: List<DataItem>) : RecyclerView.Adapter<RecipeViewHolder>() {
+class TradeDataAdapter(private val recipesListViewModel: RecipesListViewModel, private val recipes: List<DataItem>) : RecyclerView.Adapter<RecipeViewHolder>() {
 
     private val onItemClickListener: RecyclerItemListener = object : RecyclerItemListener {
         override fun onItemSelected(recipe: DataItem) {

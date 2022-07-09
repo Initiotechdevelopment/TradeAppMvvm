@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,8 +16,6 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 import com.task.R
 import com.task.RECIPE_ITEM_KEY
@@ -28,14 +25,12 @@ import com.task.data.error.SEARCH_ERROR
 import com.task.databinding.HomeActivityBinding
 import com.task.ui.base.BaseActivity
 import com.task.ui.component.details.DetailsActivity
-import com.task.ui.component.recipes.adapter.RecipesAdapter
+import com.task.ui.component.recipes.adapter.TradeDataAdapter
 import com.task.ui.component.recipes.adapter.TradeWatchlistAdapter
 import com.task.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.home_activity.*
-import java.io.IOException
-import java.util.*
 import kotlin.concurrent.fixedRateTimer
+import kotlin.random.Random
 
 /**
  * Created by Sumeetbhut
@@ -46,8 +41,8 @@ class RecipesListActivity : BaseActivity() {
 
     private val recipesListViewModel: RecipesListViewModel by viewModels()
 
-    private lateinit var recipesAdapter: RecipesAdapter
-    private lateinit var tradeAdapter: TradeWatchlistAdapter
+    private lateinit var tradeDataAdapter: TradeDataAdapter
+    private lateinit var tradeWatchlistAdapter: TradeWatchlistAdapter
 
     override fun initViewBinding() {
         binding = HomeActivityBinding.inflate(layoutInflater)
@@ -71,16 +66,17 @@ class RecipesListActivity : BaseActivity() {
         recipesListViewModel.set(this)
 
         recipesListViewModel.getWatchlistname()
+        recipesListViewModel.getJsonDataFromAssetWithSelectedTab()
 
-        fixedRateTimer("timer", false, 0L, 30 * 1000) {
-            this@RecipesListActivity.runOnUiThread {
-                recipesListViewModel.getJsonDataFromAssetWithSelectedTab()
-            }
-        }
+
+        /* fixedRateTimer("timer", false, 0L, 3 * 1000) {
+             this@RecipesListActivity.runOnUiThread {
+                 recipesListViewModel.getJsonDataFromAssetWithSelectedTab()
+                 Log.d("Datacall","Datacall"+recipesListViewModel.recipes.data?.size)
+             }
+         }*/
 
 //        binding.watchlistname.findViewHolderForAdapterPosition(0)?.itemView?.performClick()
-
-
 //        recipesListViewModel.getRecipes()
 //        recipesListViewModel.getTradeResponse()
 
@@ -125,11 +121,16 @@ class RecipesListActivity : BaseActivity() {
 
     private fun bindListData(recipes: List<DataItem>) {
         if (!(recipes.isNullOrEmpty())) {
-            recipesAdapter = RecipesAdapter(recipesListViewModel, recipes)
-
-            binding.rvRecipesList.adapter = recipesAdapter
+            tradeDataAdapter = TradeDataAdapter(recipesListViewModel, recipes)
+            binding.rvRecipesList.adapter = tradeDataAdapter
             showDataView(true)
+            tradeDataAdapter.notifyDataSetChanged()
 
+            fixedRateTimer("timer", false, 0L, 3 * 1000) {
+                this@RecipesListActivity.runOnUiThread {
+
+                }
+            }
 
         } else {
             showDataView(false)
@@ -138,8 +139,8 @@ class RecipesListActivity : BaseActivity() {
 
     private fun bindWatchlist(watchlistname: List<Watchlistname>) {
         if (!(watchlistname.isNullOrEmpty())) {
-            tradeAdapter = TradeWatchlistAdapter(recipesListViewModel, watchlistname)
-            binding.watchlistname.adapter = tradeAdapter
+            tradeWatchlistAdapter = TradeWatchlistAdapter(recipesListViewModel, watchlistname)
+            binding.watchlistname.adapter = tradeWatchlistAdapter
             showDataView(true)
 
         } else {
@@ -204,14 +205,26 @@ class RecipesListActivity : BaseActivity() {
     }
 
     private fun handleTradeList(data: List<DataItem?>) {
+
+
+        fixedRateTimer("timer1", false, 0L, 3 * 1000) {
+            ((this@RecipesListActivity)).runOnUiThread {
+                data.get(0)?.lastTradePrice?.plus(Random.nextDouble(10.0))
+            }
+        }
         data?.let {
             bindListData(recipes = it as List<DataItem>)
         }
 
+        tradeDataAdapter.notifyDataSetChanged()
+
+
+
+
     }
 
     override fun observeViewModel() {
-        observe(recipesListViewModel.recipesLiveData, ::handleRecipesList)
+//        observe(recipesListViewModel.recipesLiveData, ::handleRecipesList)
         observe(recipesListViewModel.tradeResponse, ::handleTradeList)
         observe(recipesListViewModel.watchlistnameResponse, ::watchlistname)
         //observe(recipesListViewModel.recipeSearchFound, ::showSearchResult)

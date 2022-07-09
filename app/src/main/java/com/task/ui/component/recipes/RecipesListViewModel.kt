@@ -29,6 +29,8 @@ import java.io.InputStream
 import java.lang.reflect.Type
 import java.util.Locale.ROOT
 import javax.inject.Inject
+import kotlin.concurrent.fixedRateTimer
+import kotlin.random.Random
 
 /**
  * Created by Sumeetbhut
@@ -40,9 +42,9 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
     /**
      * Data --> LiveData, Exposed as LiveData, Locally in viewModel as MutableLiveData
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val recipesLiveDataPrivate = MutableLiveData<Resource<TradeResponse>>()
-    val recipesLiveData: LiveData<Resource<TradeResponse>> get() = recipesLiveDataPrivate
+//    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+//    val recipesLiveDataPrivate = MutableLiveData<Resource<TradeResponse>>()
+//    val recipesLiveData: LiveData<Resource<TradeResponse>> get() = recipesLiveDataPrivate
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val recipesLiveDataPrivateTradeRes = MutableLiveData<List<DataItem?>>()
@@ -93,20 +95,20 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
         initData()
     }
 
-    fun getRecipes() {
+ /*   fun getRecipes() {
         viewModelScope.launch {
 
-            recipesLiveDataPrivate.value = Resource.Loading()
+//            recipesLiveDataPrivate.value = Resource.Loading()
 
             wrapEspressoIdlingResource {
                 dataRepositoryRepository.requestRecipes().collect {
-                    recipesLiveDataPrivate.value = it
+//                    recipesLiveDataPrivate.value = it
                 }
             }
 
         }
     }
-
+*/
     fun getTradeResponse() {
         viewModelScope.launch {
 
@@ -131,7 +133,7 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
     }
 
     fun onSearchClick(recipeName: String) {
-        recipesLiveDataPrivate.value?.data?.data?.let {
+        /*recipesLiveDataPrivate.value?.data?.data?.let {
             if (it.isNotEmpty()) {
                 for (recipe in it) {
                     if (recipe?.name!!.toLowerCase(ROOT).contains(recipeName.toLowerCase(ROOT))) {
@@ -140,7 +142,7 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
                     }
                 }
             }
-        }
+        }*/
         return noSearchFoundPrivate.postValue(Unit)
     }
 
@@ -233,17 +235,53 @@ constructor(private val dataRepositoryRepository: DataRepositorySource) : BaseVi
                 gson.fromJson(jsonString, TradeItemDataResponse::class.java)
             Log.d("size", " :: " + tradeItems.data?.size)
 
-            tradeItems.data?.forEachIndexed { idx, person ->
-                Log.i(
-                    "data",
-                    "> Item $idx:\n$person"
-                )
+            val listnewchangedata = ArrayList<DataItem?>();
+            tradeItems.data?.forEachIndexed { idx, trademodel ->
+                var itemminusplus = Random.nextInt(3);
+
+                Log.d("size", " :: " + tradeItems.data?.get(idx)?.lastTradePrice)
+               /* if(itemminusplus.equals(2)){
+                    trademodel?.lastTradePrice?.minus(Random.nextInt(10))
+                }else{
+                    trademodel?.lastTradePrice?.plus(Random.nextInt(10))
+                }*/
+                trademodel?.lastTradePrice?.plus(Random.nextDouble(10.0))
+                trademodel?.dayHigh?.plus(Random.nextDouble(10.0))
+                trademodel?.exch?.plus(Random.nextDouble(10.0))
+                Log.d("size", " :: " + trademodel?.lastTradePrice+" :: "+trademodel?.lastTradePrice?.plus(Random.nextDouble(10.0)))
+                var tempmodel = trademodel;
+                Log.d("size", " :: " + tempmodel?.lastTradePrice+" :: "+tempmodel?.dayHigh)
+                listnewchangedata.add(tempmodel)
             }
 
-            tradeItems?.data?.let {
+
+
+            fixedRateTimer("timer", false, 0L, 3 * 1000) {
+                ((context as RecipesListActivity)).runOnUiThread {
+                    val listnewchangedata = ArrayList<DataItem?>();
+                    tradeItems.data?.forEachIndexed { idx, trademodel ->
+                        var itemminusplus = Random.nextInt(3);
+
+                        Log.d("size", " :: " + tradeItems.data?.get(idx)?.lastTradePrice)
+
+                        trademodel?.lastTradePrice?.plus(Random.nextDouble(10.0))
+                        trademodel?.dayHigh?.plus(Random.nextDouble(10.0))
+                        trademodel?.exch?.plus(Random.nextDouble(10.0))
+                        Log.d("size", " :: " + trademodel?.lastTradePrice+" :: "+trademodel?.lastTradePrice?.plus(Random.nextDouble(10.0)))
+                        var tempmodel = trademodel;
+                        Log.d("size", " :: " + tempmodel?.lastTradePrice+" :: "+tempmodel?.dayHigh)
+                        listnewchangedata.add(tempmodel)
+
+                    }
+//                    recipesLiveDataPrivateTradeRes.value = listnewchangedata
+                }
+            }
+
+            listnewchangedata?.let {
                 recipesLiveDataPrivateTradeRes.value = emptyList()
                 recipesLiveDataPrivateTradeRes.value = it
             }
+
             //loadDataFromGson(tradeItems)
 
         } catch (ioException: IOException) {
