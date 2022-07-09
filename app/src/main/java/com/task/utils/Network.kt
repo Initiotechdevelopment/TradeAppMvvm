@@ -6,7 +6,7 @@ import android.net.NetworkInfo
 import javax.inject.Inject
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class Network @Inject constructor(val context: Context) : NetworkConnectivity {

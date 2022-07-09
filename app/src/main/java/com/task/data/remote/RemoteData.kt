@@ -3,6 +3,8 @@ package com.task.data.remote
 import com.task.data.Resource
 import com.task.data.dto.recipes.Recipes
 import com.task.data.dto.recipes.RecipesItem
+import com.task.data.dto.trade.TradeItems
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.error.NETWORK_ERROR
 import com.task.data.error.NO_INTERNET_CONNECTION
 import com.task.data.remote.service.RecipesService
@@ -13,16 +15,16 @@ import javax.inject.Inject
 
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class RemoteData @Inject
 constructor(private val serviceGenerator: ServiceGenerator, private val networkConnectivity: NetworkConnectivity) : RemoteDataSource {
-    override suspend fun requestRecipes(): Resource<Recipes> {
+    override suspend fun requestRecipes(): Resource<TradeResponse> {
         val recipesService = serviceGenerator.createService(RecipesService::class.java)
         return when (val response = processCall(recipesService::fetchRecipes)) {
             is List<*> -> {
-                Resource.Success(data = Recipes(response as ArrayList<RecipesItem>))
+                Resource.Success(data = TradeResponse(response as ArrayList<TradeItems>))
             }
             else -> {
                 Resource.DataError(errorCode = response as Int)

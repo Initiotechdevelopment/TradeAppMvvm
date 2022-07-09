@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.task.data.DataRepositorySource
 import com.task.data.Resource
 import com.task.data.dto.recipes.RecipesItem
+import com.task.data.dto.trade.TradeItems
 import com.task.ui.base.BaseViewModel
 import com.task.utils.wrapEspressoIdlingResource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,40 +16,40 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 @HiltViewModel
 open class DetailsViewModel @Inject constructor(private val dataRepository: DataRepositorySource) : BaseViewModel() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val recipePrivate = MutableLiveData<RecipesItem>()
-    val recipeData: LiveData<RecipesItem> get() = recipePrivate
+    val recipePrivate = MutableLiveData<TradeItems>()
+    val recipeData: LiveData<TradeItems> get() = recipePrivate
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val isFavouritePrivate = MutableLiveData<Resource<Boolean>>()
     val isFavourite: LiveData<Resource<Boolean>> get() = isFavouritePrivate
 
-    fun initIntentData(recipe: RecipesItem) {
+    fun initIntentData(recipe: TradeItems) {
         recipePrivate.value = recipe
     }
 
     open fun addToFavourites() {
         viewModelScope.launch {
             isFavouritePrivate.value = Resource.Loading()
-            wrapEspressoIdlingResource {
+            /*wrapEspressoIdlingResource {
                 recipePrivate.value?.id?.let {
                     dataRepository.addToFavourite(it).collect { isAdded ->
                         isFavouritePrivate.value = isAdded
                     }
                 }
-            }
+            }*/
         }
     }
 
     fun removeFromFavourites() {
         viewModelScope.launch {
             isFavouritePrivate.value = Resource.Loading()
-            wrapEspressoIdlingResource {
+           /* wrapEspressoIdlingResource {
                 recipePrivate.value?.id?.let {
                     dataRepository.removeFromFavourite(it).collect { isRemoved ->
                         when (isRemoved) {
@@ -64,20 +65,20 @@ open class DetailsViewModel @Inject constructor(private val dataRepository: Data
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 
     fun isFavourites() {
         viewModelScope.launch {
             isFavouritePrivate.value = Resource.Loading()
-            wrapEspressoIdlingResource {
+            /*wrapEspressoIdlingResource {
                 recipePrivate.value?.id?.let {
                     dataRepository.isFavourite(it).collect { isFavourites ->
                         isFavouritePrivate.value = isFavourites
                     }
                 }
-            }
+            }*/
         }
     }
 }

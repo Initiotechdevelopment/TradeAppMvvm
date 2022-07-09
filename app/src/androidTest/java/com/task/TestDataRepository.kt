@@ -6,7 +6,7 @@ import com.task.data.DataRepositorySource
 import com.task.data.Resource
 import com.task.data.dto.login.LoginRequest
 import com.task.data.dto.login.LoginResponse
-import com.task.data.dto.recipes.Recipes
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.error.Error
 import com.task.data.error.NETWORK_ERROR
 import kotlinx.coroutines.flow.Flow
@@ -15,21 +15,21 @@ import javax.inject.Inject
 
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class TestDataRepository @Inject constructor() : DataRepositorySource {
 
-    override suspend fun requestRecipes(): Flow<Resource<Recipes>> {
+    override suspend fun requestRecipes(): Flow<Resource<TradeResponse>> {
         return when (dataStatus) {
             DataStatus.Success -> {
                 flow { emit(Resource.Success(initData())) }
             }
             DataStatus.Fail -> {
-                flow { emit(Resource.DataError<Recipes>(errorCode = NETWORK_ERROR)) }
+                flow { emit(Resource.DataError<TradeResponse>(errorCode = NETWORK_ERROR)) }
             }
             DataStatus.EmptyResponse -> {
-                flow { emit(Resource.Success(Recipes(arrayListOf()))) }
+                flow { emit(Resource.Success(TradeResponse(arrayListOf()))) }
             }
         }
     }

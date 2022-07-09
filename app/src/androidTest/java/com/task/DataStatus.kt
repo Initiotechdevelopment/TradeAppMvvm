@@ -1,7 +1,7 @@
 package com.task
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 sealed class DataStatus {
     object Success : DataStatus()

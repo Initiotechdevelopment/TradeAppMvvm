@@ -3,6 +3,7 @@ package com.task.data
 import com.task.data.dto.login.LoginRequest
 import com.task.data.dto.login.LoginResponse
 import com.task.data.dto.recipes.Recipes
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.local.LocalData
 import com.task.data.remote.RemoteData
 import kotlinx.coroutines.flow.Flow
@@ -13,15 +14,19 @@ import kotlin.coroutines.CoroutineContext
 
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class DataRepository @Inject constructor(private val remoteRepository: RemoteData, private val localRepository: LocalData, private val ioDispatcher: CoroutineContext) : DataRepositorySource {
 
-    override suspend fun requestRecipes(): Flow<Resource<Recipes>> {
+    override suspend fun requestRecipes(): Flow<Resource<TradeResponse>> {
         return flow {
             emit(remoteRepository.requestRecipes())
         }.flowOn(ioDispatcher)
+    }
+
+    override suspend fun requestTraderesponse(): Flow<Resource<TradeResponse>> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun doLogin(loginRequest: LoginRequest): Flow<Resource<LoginResponse>> {

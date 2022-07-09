@@ -1,7 +1,7 @@
 package com.task.data.error
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class Error(val code: Int, val description: String) {

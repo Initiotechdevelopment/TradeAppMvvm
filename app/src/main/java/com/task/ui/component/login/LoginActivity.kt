@@ -14,8 +14,9 @@ import com.task.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
+
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {
 

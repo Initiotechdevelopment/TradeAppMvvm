@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 import com.task.R
 import com.task.RECIPE_ITEM_KEY
 import com.task.data.Resource
-import com.task.data.dto.recipes.RecipesItem
+import com.task.data.dto.trade.TradeItems
 import com.task.databinding.DetailsLayoutBinding
 import com.task.ui.base.BaseActivity
 import com.task.utils.observe
@@ -18,7 +18,7 @@ import com.task.utils.toVisible
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 @AndroidEntryPoint
@@ -38,7 +38,7 @@ class DetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.initIntentData(intent.getParcelableExtra(RECIPE_ITEM_KEY) ?: RecipesItem())
+        viewModel.initIntentData(intent.getParcelableExtra(RECIPE_ITEM_KEY) ?: TradeItems())
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -93,12 +93,12 @@ class DetailsActivity : BaseActivity() {
         }
     }
 
-    private fun initializeView(recipesItem: RecipesItem) {
+    private fun initializeView(recipesItem: TradeItems) {
         binding.tvName.text = recipesItem.name
-        binding.tvHeadline.text = recipesItem.headline
-        binding.tvDescription.text = recipesItem.description
-        Picasso.get().load(recipesItem.image).placeholder(R.drawable.ic_healthy_food_small)
-                .into(binding.ivRecipeImage)
+        binding.tvHeadline.text = recipesItem.exchType
+        binding.tvDescription.text = recipesItem.lastTradePrice.toString()
+//        Picasso.get().load(recipesItem.image).placeholder(R.drawable.ic_healthy_food_small)
+//                .into(binding.ivRecipeImage)
 
     }
 }

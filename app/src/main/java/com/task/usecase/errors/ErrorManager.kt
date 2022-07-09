@@ -5,7 +5,7 @@ import com.task.data.error.mapper.ErrorMapper
 import javax.inject.Inject
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class ErrorManager @Inject constructor(private val errorMapper: ErrorMapper) : ErrorUseCase {

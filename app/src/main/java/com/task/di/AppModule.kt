@@ -16,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+class                            AppModule {
     @Provides
     @Singleton
     fun provideLocalRepository(@ApplicationContext context: Context): LocalData {

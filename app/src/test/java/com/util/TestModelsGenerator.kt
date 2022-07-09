@@ -3,8 +3,8 @@ package com.util
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.task.data.dto.recipes.Recipes
-import com.task.data.dto.recipes.RecipesItem
+import com.task.data.dto.trade.TradeItems
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.remote.moshiFactories.MyKotlinJsonAdapterFactory
 import com.task.data.remote.moshiFactories.MyStandardJsonAdapters
 import java.io.File
@@ -12,40 +12,42 @@ import java.lang.reflect.Type
 
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 class TestModelsGenerator {
-    private var recipes: Recipes = Recipes(arrayListOf())
+//    private var recipes: Recipes = Recipes(arrayListOf())
+    private var recipes: TradeResponse = TradeResponse(arrayListOf())
 
     init {
         val moshi = Moshi.Builder()
                 .add(MyKotlinJsonAdapterFactory())
                 .add(MyStandardJsonAdapters.FACTORY)
                 .build()
-        val type: Type = Types.newParameterizedType(List::class.java, RecipesItem::class.java)
-        val adapter: JsonAdapter<List<RecipesItem>> = moshi.adapter(type)
-        val jsonString = getJson("RecipesApiResponse.json")
+        val type: Type = Types.newParameterizedType(List::class.java, TradeItems::class.java)
+        val adapter: JsonAdapter<List<TradeItems>> = moshi.adapter(type)
+//        val jsonString = getJson("RecipesApiResponse.json")
+        val jsonString = getJson("watchlist2_data.json")
         adapter.fromJson(jsonString)?.let {
-            recipes = Recipes(ArrayList(it))
+            recipes = TradeResponse(ArrayList(it))
         }
         print("this is $recipes")
     }
 
-    fun generateRecipes(): Recipes {
+    fun generateRecipes(): TradeResponse {
         return recipes
     }
 
-    fun generateRecipesModelWithEmptyList(): Recipes {
-        return Recipes(arrayListOf())
+    fun generateRecipesModelWithEmptyList(): TradeResponse {
+        return TradeResponse(arrayListOf())
     }
 
-    fun generateRecipesItemModel(): RecipesItem {
-        return recipes.recipesList[0]
+    fun generateRecipesItemModel(): TradeItems? {
+        return recipes.data?.get(0)
     }
 
-    fun getStubSearchTitle(): String {
-        return recipes.recipesList[0].name
+    fun getStubSearchTitle(): String? {
+        return recipes.data?.get(0)?.name
     }
 
 

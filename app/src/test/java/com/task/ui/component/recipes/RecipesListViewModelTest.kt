@@ -3,7 +3,7 @@ package com.task.ui.component.recipes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.task.data.DataRepository
 import com.task.data.Resource
-import com.task.data.dto.recipes.Recipes
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.error.NETWORK_ERROR
 import com.util.InstantExecutorExtension
 import com.util.MainCoroutineRule
@@ -43,7 +43,7 @@ class RecipesListViewModelTest {
     fun setUp() {
         // Create class under test
         // We initialise the repository with no tasks
-        recipeTitle = testModelsGenerator.getStubSearchTitle()
+        recipeTitle = testModelsGenerator.getStubSearchTitle().toString()
     }
 
     @Test
@@ -63,7 +63,7 @@ class RecipesListViewModelTest {
         recipesListViewModel.recipesLiveData.observeForever { }
 
         //3-verify
-        val isEmptyList = recipesListViewModel.recipesLiveData.value?.data?.recipesList.isNullOrEmpty()
+        val isEmptyList = recipesListViewModel.recipesLiveData.value?.data?.data.isNullOrEmpty()
         assertEquals(recipesModel, recipesListViewModel.recipesLiveData.value?.data)
         assertEquals(false,isEmptyList)
     }
@@ -85,7 +85,7 @@ class RecipesListViewModelTest {
         recipesListViewModel.recipesLiveData.observeForever { }
 
         //3-verify
-        val isEmptyList = recipesListViewModel.recipesLiveData.value?.data?.recipesList.isNullOrEmpty()
+        val isEmptyList = recipesListViewModel.recipesLiveData.value?.data?.data.isNullOrEmpty()
         assertEquals(recipesModel, recipesListViewModel.recipesLiveData.value?.data)
         assertEquals(true, isEmptyList)
     }
@@ -93,7 +93,7 @@ class RecipesListViewModelTest {
     @Test
     fun `get Recipes Error`() {
         // Let's do an answer for the liveData
-        val error: Resource<Recipes> = Resource.DataError(NETWORK_ERROR)
+        val error: Resource<TradeResponse> = Resource.DataError(NETWORK_ERROR)
 
         //1- Mock calls
         coEvery { dataRepository.requestRecipes() } returns flow {
@@ -114,13 +114,15 @@ class RecipesListViewModelTest {
     fun `search Success`() {
         // Let's do an answer for the liveData
         val recipe = testModelsGenerator.generateRecipesItemModel()
-        val title = recipe.name
+        val title = recipe?.name
         //1- Mock calls
         recipesListViewModel = RecipesListViewModel(dataRepository)
         recipesListViewModel.recipesLiveDataPrivate.value = Resource.Success(testModelsGenerator.generateRecipes())
 
         //2-Call
-        recipesListViewModel.onSearchClick(title)
+        if (title != null) {
+            recipesListViewModel.onSearchClick(title)
+        }
         //active observer for livedata
         recipesListViewModel.recipeSearchFound.observeForever { }
 

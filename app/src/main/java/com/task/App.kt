@@ -5,7 +5,7 @@ import android.content.Context
 import dagger.hilt.android.HiltAndroidApp
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 @HiltAndroidApp
 open class App : Application()

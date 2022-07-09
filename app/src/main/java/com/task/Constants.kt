@@ -1,7 +1,7 @@
 package com.task
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 
 const val SPLASH_DELAY = 3000

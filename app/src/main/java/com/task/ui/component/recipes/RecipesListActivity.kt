@@ -4,6 +4,8 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
@@ -14,11 +16,16 @@ import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 import com.task.R
 import com.task.RECIPE_ITEM_KEY
 import com.task.data.Resource
-import com.task.data.dto.recipes.Recipes
-import com.task.data.dto.recipes.RecipesItem
+import com.task.data.dto.trade.DataItem
+import com.task.data.dto.trade.TradeItemDataResponse
+import com.task.data.dto.trade.TradeItems
+import com.task.data.dto.trade.TradeResponse
 import com.task.data.error.SEARCH_ERROR
 import com.task.databinding.HomeActivityBinding
 import com.task.ui.base.BaseActivity
@@ -26,9 +33,12 @@ import com.task.ui.component.details.DetailsActivity
 import com.task.ui.component.recipes.adapter.RecipesAdapter
 import com.task.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
+import java.util.*
+import kotlin.concurrent.fixedRateTimer
 
 /**
- * Created by AhmedEltaher
+ * Created by Sumeetbhut
  */
 @AndroidEntryPoint
 class RecipesListActivity : BaseActivity() {
@@ -49,7 +59,19 @@ class RecipesListActivity : BaseActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvRecipesList.layoutManager = layoutManager
         binding.rvRecipesList.setHasFixedSize(true)
-        recipesListViewModel.getRecipes()
+
+        recipesListViewModel.set(this)
+
+
+        fixedRateTimer("timer", false, 0L, 30 * 1000) {
+            this@RecipesListActivity.runOnUiThread {
+                recipesListViewModel.getJsonDataFromAsset()
+            }
+        }
+
+//        recipesListViewModel.getRecipes()
+//        recipesListViewModel.getTradeResponse()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,7 +98,7 @@ class RecipesListActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_refresh -> recipesListViewModel.getRecipes()
+            R.id.action_refresh -> recipesListViewModel.getTradeResponse()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -89,9 +111,9 @@ class RecipesListActivity : BaseActivity() {
     }
 
 
-    private fun bindListData(recipes: Recipes) {
-        if (!(recipes.recipesList.isNullOrEmpty())) {
-            recipesAdapter = RecipesAdapter(recipesListViewModel, recipes.recipesList)
+    private fun bindListData(recipes: List<DataItem>) {
+        if (!(recipes.isNullOrEmpty())) {
+            recipesAdapter = RecipesAdapter(recipesListViewModel, recipes)
             binding.rvRecipesList.adapter = recipesAdapter
             showDataView(true)
         } else {
@@ -99,7 +121,8 @@ class RecipesListActivity : BaseActivity() {
         }
     }
 
-    private fun navigateToDetailsScreen(navigateEvent: SingleEvent<RecipesItem>) {
+
+    private fun navigateToDetailsScreen(navigateEvent: SingleEvent<TradeItems>) {
         navigateEvent.getContentIfNotHandled()?.let {
             val nextScreenIntent = Intent(this, DetailsActivity::class.java).apply {
                 putExtra(RECIPE_ITEM_KEY, it)
@@ -133,7 +156,7 @@ class RecipesListActivity : BaseActivity() {
     }
 
 
-    private fun showSearchResult(recipesItem: RecipesItem) {
+    private fun showSearchResult(recipesItem: DataItem) {
         recipesListViewModel.openRecipeDetails(recipesItem)
         binding.pbLoading.toGone()
     }
@@ -143,10 +166,10 @@ class RecipesListActivity : BaseActivity() {
         binding.pbLoading.toGone()
     }
 
-    private fun handleRecipesList(status: Resource<Recipes>) {
+    private fun handleRecipesList(status: Resource<TradeResponse>) {
         when (status) {
             is Resource.Loading -> showLoadingView()
-            is Resource.Success -> status.data?.let { bindListData(recipes = it) }
+            is Resource.Success -> status.data?.data.let { bindListData(recipes = it as List<DataItem>) }
             is Resource.DataError -> {
                 showDataView(false)
                 status.errorCode?.let { recipesListViewModel.showToastMessage(it) }
@@ -154,13 +177,23 @@ class RecipesListActivity : BaseActivity() {
         }
     }
 
+    private fun handleTradeList(data: List<DataItem?>) {
+        data?.let {
+            bindListData(recipes = it as List<DataItem>)
+        }
+    }
+
     override fun observeViewModel() {
         observe(recipesListViewModel.recipesLiveData, ::handleRecipesList)
-        observe(recipesListViewModel.recipeSearchFound, ::showSearchResult)
+        observe(recipesListViewModel.tradeResponse, ::handleTradeList)
+        //observe(recipesListViewModel.recipeSearchFound, ::showSearchResult)
         observe(recipesListViewModel.noSearchFound, ::noSearchResult)
-        observeEvent(recipesListViewModel.openRecipeDetails, ::navigateToDetailsScreen)
+//        observeEvent(recipesListViewModel.openRecipeDetails, ::navigateToDetailsScreen)
         observeSnackBarMessages(recipesListViewModel.showSnackBar)
         observeToast(recipesListViewModel.showToast)
 
     }
+
 }
+
+
